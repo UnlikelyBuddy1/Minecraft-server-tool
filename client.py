@@ -12,12 +12,8 @@ import socket
 #endregion
 #region initial variables
 client=None
-error=0
-focus_settings=0
-status="off"
-command=""
 #endregion
-#region GUI colors theme and image looading
+#region GUI colors
 # default
 light_gray_color = "#333333"
 dark_gray_color = "#1e1e1e"
@@ -30,10 +26,9 @@ selected_color = "#252526"
 #region GUI
 current_directory = (os.path.dirname(os.path.realpath(__file__)))
 current_directory = current_directory.replace("\\", '/')
-fieldnames=['ip','port']
 
 def shut_down():
-    global fieldnames
+    fieldnames=['ip','port']
     if(os.path.isfile(current_directory+'/configs/configs.csv')):
         with open(current_directory+'/configs/configs.csv', 'w') as csv_file:
             csv_writer = csv.DictWriter(
@@ -41,7 +36,10 @@ def shut_down():
             csv_writer.writeheader()
             line = {fieldnames[0]: '{}'.format(ip_entry.get()), fieldnames[1]: '{}'.format(port_entry.get())}
             csv_writer.writerow(line)
-    client.close()
+    try:
+        client.close()
+    except:
+        pass
     sys.exit()
 
 root = Tk()
@@ -70,60 +68,11 @@ frame.pack(side=LEFT)
 status_frame=Frame(root, bd=0, bg=dark_gray_color)
 status_frame.pack(side=BOTTOM)
 #endregion
-#region network funcs
-def get_status():
-    global client, error, command
-    PORT = int(port_entry.get())
-    SERVER = str(ip_entry.get())
-    ADDR = (SERVER, PORT)
-    try: 
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect(ADDR)
-        reply=send(command)
-        test(reply)
-    except:
-        error=1
-        test("")
-    else:
-        error=0
-
-status_button = Button(status_frame, width=5, padx=5, pady=5, fg=dark_gray_color, bg="orange",bd=0, command=get_status)
-status_button.pack(side=RIGHT, expand=1)
-status_text = Label(status_frame, width=5, text="Status", bg=dark_gray_color, fg=white_color,justify='center').pack(side=RIGHT, expand=1)  # put text on the window
-
-def test(state):
-    global status
-    if state == "open":
-        status_button.configure(bg="green")
-    elif state == "closed" :
-        status_button.configure(bg="orange")
-    else:
-        status_button.configure(bg="red")
-    status=state
-#endregion
-#region settings
-
-def dont_close():
-    global focus_settings, error, command, client
-    PORT = int(port_entry.get())
-    SERVER = str(ip_entry.get())
-    ADDR = (SERVER, PORT)
-    if error:
-        try: 
-            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client.connect(ADDR)
-            reply=send(command)
-            test(reply)
-        except:
-            status_button.configure(bg="red")
-        else:
-            error=0
-            
+#region settings Window + Network status
+def dont_close():  
     settings.withdraw()
     
-
 def show_settings():
-    global focus_settings
     settings.update()
     settings.deiconify()
     focus_settings=1
@@ -138,11 +87,9 @@ try :
     settings.iconphoto(False, tk.PhotoImage(file=current_directory+'/images/logo.png'))
 except:
     pass
+
 settings.protocol('WM_DELETE_WINDOW', dont_close)
 settings.withdraw()
-
-show_settings_button = Button(frame, image=bedrock, bd=0, command=show_settings)
-
 ip_label=Label(settings, text="IP ADRESS", bg="#8B4513", width=12, fg="black", relief=RAISED)
 ip_label['font']=fontStyle
 ip_label.pack(side=TOP)
@@ -157,6 +104,8 @@ port_entry['font']=fontStyle
 port_label.pack()
 port_entry.pack()
 
+show_settings_button = Button(frame, image=bedrock, bd=0, command=show_settings)
+
 if(os.path.isfile(current_directory+'/configs/configs.csv')):
     with open(current_directory+'/configs/configs.csv', 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
@@ -167,10 +116,33 @@ if(os.path.isfile(current_directory+'/configs/configs.csv')):
             port_entry.insert(INSERT, port)
 else:
     port_entry.insert(INSERT, 9999)
+status_button = Button(status_frame, width=5, padx=5, pady=5, fg=dark_gray_color, bg="red",bd=1, relief= RAISED, command=lambda:get_status(client, int(port_entry.get()), str(ip_entry.get())))
+status_button.pack(side=RIGHT, expand=1)
+status_text = Label(status_frame, width=5, text="Status", bg=dark_gray_color, fg=white_color,justify='center').pack(side=RIGHT, expand=1)  # put text on the window
 # endregion
+#region network funcs
+def get_status(client, PORT, SERVER):
+    ADDR = (SERVER, PORT)
+    try: 
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect(ADDR)
+        reply=send("")
+        test(reply)
+    except:
+        MsgBox = tk.messagebox.showwarning('Warning', 'The IP adress or PORT are wrong OR the server pc is turned off', icon='warning')
+        show_settings()
+        status_button.configure(bg="red")
+
+def test(state):
+    if state == "open":
+        status_button.configure(bg="green")
+    elif state == "closed" :
+        status_button.configure(bg="orange")
+    else:
+        status_button.configure(bg="red")
+#endregion
 #region Network
 HEADER = 64
-
 PORT = int(port_entry.get())
 SERVER = str(ip_entry.get())
 FORMAT = 'utf-8'
@@ -186,12 +158,6 @@ def send(msg):
     client.send(message)
     return (client.recv(2048).decode(FORMAT))
 
-get_status()
-if error:
-    MsgBox = tk.messagebox.showwarning('Warning', 'The IP adress or PORT are wrong OR the server pc is turned off', icon='warning')
-    show_settings()
-    status_button.configure(bg="red")
-    
 #endregion
 #region start & stop buttons
 def start():
@@ -200,17 +166,15 @@ def start():
         test(reply)
     except:
         status_button.configure(bg="red")
-    
-    
+       
 def stop():
-    if status != "off":
-        MsgBox = tk.messagebox.askquestion('Warning', 'Are you sure you want to Stop server ?', icon='warning')
-        if (MsgBox == 'yes'):
-            try:
-                reply=send("stop")
-                test(reply)
-            except:
-                status_button.configure(bg="red")
+    MsgBox = tk.messagebox.askquestion('Warning', 'Are you sure you want to Stop server ?', icon='warning')
+    if (MsgBox == 'yes'):
+        try:
+            reply=send("stop")
+            test(reply)
+        except:
+            status_button.configure(bg="red")
         
 
 start_button = Button(frame, image=img_start, bd=0, command=start)
