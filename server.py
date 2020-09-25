@@ -18,18 +18,6 @@ if(os.path.isfile(current_directory+'/MCserver_configs.csv')):
                 PORT = int(line['port'])
             except:
                 print("the port value MUST be an integer, check your MCserver_configs.csv file")
-            first_launch = line['first_launch']
-    if first_launch:
-        PORT=int(input("PORT of the server ? must be an integer (default is 9999)\n"))
-        first_launch=0
-        fieldnames=['port','first_launch']
-        with open(current_directory+'/MCserver_configs.csv', 'w') as csv_file:
-            csv_writer = csv.DictWriter(
-                csv_file, fieldnames=fieldnames, delimiter=',')
-            csv_writer.writeheader()
-            line = {fieldnames[0]: PORT, fieldnames[1]: first_launch}
-            csv_writer.writerow(line)
-
 HEADER = 64
 SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
