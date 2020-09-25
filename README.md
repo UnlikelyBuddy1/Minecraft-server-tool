@@ -16,7 +16,8 @@ Put the "client" folder wherever you want and inside it find the "client.exe" fi
 - **Server**
 Take the entirety of the content of the McServerTool folder and copy-paste it to your Minecraft server folder. Launch the McServerTool.exe from within the Minecraft server folder and voilà ! All that's left to do is to set up a **Port**, **Port forward it** (if not on local network), and then use the ip+port on the client to start and stop the server !
 ## Very quick guide
+### Click on the status color to connect.
 ![guide](https://user-images.githubusercontent.com/52712038/94177523-f578af80-fe99-11ea-92a0-7750fd79c723.png)
 
-You can click on the status color to try to reconnect.
+
 
