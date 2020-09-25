@@ -10,7 +10,7 @@ This app has been made in a rush there might still be some hidden bugs. I am not
 The goal of this application is to be able to ***start and close a minecraft*** server **remotely** from a windows pc to another windows pc (i haven't tried on linux)
 
 ## Getting started
-You juste have to download the executable files. [**McServerTool**](https://github.com/UnlikelyBuddy1/Minecraft-server-tool/releases/download/1/McServerTool.rar) for **servers** and [**client**](https://github.com/UnlikelyBuddy1/Minecraft-server-tool/releases/download/1/client.rar) for the **clients**, once downloaded and unZipped
+You juste have to download the executable files. [**McServerTool**](https://github.com/UnlikelyBuddy1/Minecraft-server-tool/releases/download/1/McServerTool.rar) for **servers** and [**McClientTool**](https://github.com/UnlikelyBuddy1/Minecraft-server-tool/releases/download/1/client.rar) for the **clients**, once downloaded and unZipped
 - **Client**
 Put the "client" folder wherever you want and inside it find the "client.exe" file. You **MUST** execute the file within the "client" folder. If that bothers you, you can just make a shortcut and problem solved !
 - **Server**
