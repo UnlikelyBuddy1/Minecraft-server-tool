@@ -14,7 +14,7 @@ You juste have to download the executable files. [**McServerTool**](https://gith
 - **Client**
 Put the "client" folder wherever you want and inside it find the "client.exe" file. You **MUST** execute the file within the "client" folder. If that bothers you, you can just make a shortcut and problem solved !
 - **Server**
-Take the entirety of the content of the McServerTool folder and copy-paste it to your Minecraft server folder. Launch the McServerTool.exe from within the Minecraft server folder and voilà ! All that's left to do is to set up a **Port**, **Port forward it** (if not on local network), and then use the ip+port on the client to start and stop the server !
+Take the entirety of the content of the McServerTool folder and copy-paste it to your Minecraft server folder. Launch the McServerTool.exe from within the Minecraft server folder and voilà ! Now all that's left to do is to set up a **Port**. If you plan on using this outside of your local network please **Don't forget to OPEN PORTS on WINDOWS FIREWALL** and to **Port forward it on your ISP control website** (usually 192.168.1.1), and then use the ip+port on the client to start and stop the server !
 ## Very quick guide
 ### Click on the status color to connect.
 ![guide](https://user-images.githubusercontent.com/52712038/94177523-f578af80-fe99-11ea-92a0-7750fd79c723.png)
