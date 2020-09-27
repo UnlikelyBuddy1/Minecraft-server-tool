@@ -1,7 +1,7 @@
 [![GitHub All Releases](https://img.shields.io/github/downloads/UnlikelyBuddy1/Minecraft-server-tool/total?style=for-the-badge)](https://github.com/UnlikelyBuddy1/Minecraft-server-tool/releases/tag/1) 
 <img align="right" src=https://user-images.githubusercontent.com/52712038/94177688-3ffa2c00-fe9a-11ea-9adb-641294fcfd73.png> 
 # Minecraft-server-tool
-A very simple and definitly not perfect yet very usefull tool for minecraft servers 
+A very simple and definitly not perfect but very usefull tool for minecraft servers 
 
 ## About the project
 ### Disclaimer
