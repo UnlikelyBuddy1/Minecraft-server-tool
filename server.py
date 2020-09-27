@@ -1,7 +1,6 @@
 #region imports
 import socket
 import threading
-import time
 import subprocess
 import os
 import csv
@@ -23,7 +22,6 @@ SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
-
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 status="closed"
@@ -43,14 +41,17 @@ def handle_client(conn, addr):
                 connected = False
             if msg == "start":
                 #launch program
-                mc=subprocess.Popen("start.bat", shell=True)
-                status="open"
+                try:
+                    mc=subprocess.Popen("start.bat", shell=True)
+                    status="open"
+                except:
+                    print("couldn't launch server")
             if msg == "stop":
                 if mc:
                     try :
                         mc=subprocess.Popen("stop.bat")
                     except :
-                        pass
+                        print("couldn't close server")
                     status="closed"
             conn.send(status.encode(FORMAT))
     conn.close()

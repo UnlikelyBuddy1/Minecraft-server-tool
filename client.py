@@ -27,25 +27,10 @@ selected_color = "#252526"
 current_directory = (os.path.dirname(os.path.realpath(__file__)))
 current_directory = current_directory.replace("\\", '/')
 
-def shut_down():
-    fieldnames=['ip','port']
-    if(os.path.isfile(current_directory+'/configs/configs.csv')):
-        with open(current_directory+'/configs/configs.csv', 'w') as csv_file:
-            csv_writer = csv.DictWriter(
-                csv_file, fieldnames=fieldnames, delimiter=',')
-            csv_writer.writeheader()
-            line = {fieldnames[0]: '{}'.format(ip_entry.get()), fieldnames[1]: '{}'.format(port_entry.get())}
-            csv_writer.writerow(line)
-    try:
-        client.close()
-    except:
-        pass
-    sys.exit()
-
 root = Tk()
 root.geometry("381x181")
 root.title("Rlcraft Tool")  # assign a title to the window
-root.protocol('WM_DELETE_WINDOW', shut_down)
+
 try :
     img = (ImageTk.PhotoImage(Image.open(current_directory+"/images/background.png")))
     img_settings = (ImageTk.PhotoImage(Image.open(current_directory+"/images/settings_bg.png")))
@@ -116,14 +101,12 @@ if(os.path.isfile(current_directory+'/configs/configs.csv')):
             port_entry.insert(INSERT, port)
 else:
     port_entry.insert(INSERT, 9999)
-status_button = Button(status_frame, width=5, padx=5, pady=5, fg=dark_gray_color, bg="red",bd=1, relief= RAISED, command=lambda:get_status(client, int(port_entry.get()), str(ip_entry.get())))
-status_button.pack(side=RIGHT, expand=1)
-status_text = Label(status_frame, width=5, text="Status", bg=dark_gray_color, fg=white_color,justify='center').pack(side=RIGHT, expand=1)  # put text on the window
 # endregion
 #region network funcs
-def get_status(client, PORT, SERVER):
-    ADDR = (SERVER, PORT)
-    try: 
+def get_status(PORT, SERVER):
+    global client
+    try:
+        ADDR = (SERVER, PORT)
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(ADDR)
         reply=send("")
@@ -131,24 +114,7 @@ def get_status(client, PORT, SERVER):
     except:
         MsgBox = tk.messagebox.showwarning('Warning', 'The IP adress or PORT are wrong OR the server pc is turned off', icon='warning')
         show_settings()
-        status_button.configure(bg="red")
-
-def test(state):
-    if state == "open":
-        status_button.configure(bg="green")
-    elif state == "closed" :
-        status_button.configure(bg="orange")
-    else:
-        status_button.configure(bg="red")
-#endregion
-#region Network
-HEADER = 64
-PORT = int(port_entry.get())
-SERVER = str(ip_entry.get())
-FORMAT = 'utf-8'
-DISCONNECT_MESSAGE = "!DISCONNECT"
-ADDR = (SERVER, PORT)
-    
+        test("")
 def send(msg):
     message = msg.encode(FORMAT)
     msg_length = len(message)
@@ -158,6 +124,24 @@ def send(msg):
     client.send(message)
     return (client.recv(2048).decode(FORMAT))
 
+status_button = Button(status_frame, width=5, padx=5, pady=5, fg=dark_gray_color, bg="red",bd=1, relief= RAISED, command=lambda:get_status(int(port_entry.get()), str(ip_entry.get())))
+status_button.pack(side=RIGHT, expand=1)
+status_text = Label(status_frame, width=5, text="Status", bg=dark_gray_color, fg=white_color,justify='center').pack(side=RIGHT, expand=1)  # put text on the window
+
+def test(state):
+    if state == "open":
+        status_button.configure(bg="green")
+    elif state == "closed" :
+        status_button.configure(bg="orange")
+    else:
+        status_button.configure(bg="red")
+
+HEADER = 64
+FORMAT = 'utf-8'
+DISCONNECT_MESSAGE = "!DISCONNECT"
+PORT=int(port_entry.get())
+SERVER=str(ip_entry.get())
+ADDR = (SERVER, PORT)
 #endregion
 #region start & stop buttons
 def start():
@@ -182,5 +166,23 @@ stop_button = Button(frame, image=img_stop, bd=0, command=stop)
 start_button.pack()
 stop_button.pack()  
 show_settings_button.pack()
+#endregion
+#region window close
+def shut_down():
+    fieldnames=['ip','port']
+    if(os.path.isfile(current_directory+'/configs/configs.csv')):
+        with open(current_directory+'/configs/configs.csv', 'w') as csv_file:
+            csv_writer = csv.DictWriter(
+                csv_file, fieldnames=fieldnames, delimiter=',')
+            csv_writer.writeheader()
+            line = {fieldnames[0]: '{}'.format(ip_entry.get()), fieldnames[1]: '{}'.format(port_entry.get())}
+            csv_writer.writerow(line)
+    try:
+        send(DISCONNECT_MESSAGE)
+        client.close()
+    except:
+        pass
+    sys.exit()
+root.protocol('WM_DELETE_WINDOW', shut_down)
 #endregion
 root.mainloop()
